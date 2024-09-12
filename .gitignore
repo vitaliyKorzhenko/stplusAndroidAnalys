@@ -31,3 +31,8 @@ google-services.json
 
 # Android Profiling
 *.hprof
+node_modules
+node_modules
+
+#add zip files to ignore
+*.zip
