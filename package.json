@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@fluentui/react-components": "^9.54.15",
+    "@fluentui/react-icons": "^2.0.258",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -10,15 +12,25 @@
     "@types/node": "^16.18.108",
     "@types/react": "^18.3.5",
     "@types/react-dom": "^18.3.0",
+    "axios": "^1.6.7",
+    "country-emoji": "^1.5.6",
+    "d3": "^7.9.0",
+    "d3-tip": "^0.9.1",
+    "firebase": "^10.8.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-scripts": "5.0.1",
+    "react-spreadsheet": "^0.9.4",
+    "scheduler": "^0.23.0",
     "typescript": "^4.9.5",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
+    "dev": "vite",
+    "buildVite": "tsc && vite build",
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "updatecordovaVite": "cd cordova && cp -r ../dist/* www/",
     "update-cordova": "cd cordova && cp -r ../build/* www/",
     "run-android": "cd cordova && cordova run android",
     "build-android": "cd cordova && cordova build android",
@@ -42,5 +54,9 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.1",
+    "vite": "^5.4.5"
   }
 }

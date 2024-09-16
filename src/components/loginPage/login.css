@@ -1,0 +1,15 @@
+/* Login.css */
+
+.login-container {
+    display: flex;
+  }
+  
+  .image-container {
+    flex: 1;
+  }
+  
+  .form-container {
+    flex: 1;
+    padding: 20px; /* Добавляем отступы для разделения элементов */
+  }
+  

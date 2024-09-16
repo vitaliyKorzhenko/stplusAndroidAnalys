@@ -1,0 +1,95 @@
+{
+    "sections" : [
+        {
+            "name": "Output Options",
+            "items": [
+                {
+                    "nodename": "font",
+                    "name": "Font",
+                    "select": "Default\\nArial\\nCourier New\\nHelvetica\\nTimes\\nTimes New Roman\\nVerdana",
+                    "value": "Default",
+                    "returnname" : "SheetDefFontName"
+                },
+                {
+                    "nodename": "fontsize",
+                    "name": "Font Size",
+                    "value": "Default",
+                    "returnname" : "SheetDefFontSize",
+                    "returndata" : "valueint",
+                    "select": "Default\\n8\\n9\\n10\\n11\\n12\\n14\\n18"
+                },
+                {
+                    "nodename": "checkbox",
+                    "name": "Add a timestamp to reports",
+                    "value": false,
+                    "returnname": "ReportTimestamp"
+                }
+            ]
+        },
+        {
+            "name":"Numeric Format",
+            "items": [
+                {
+                    "nodename": "formatdecimal",
+                    "name": "Decimal places [2-12]",
+                    "nameshort": "Decimal places",
+                    "value": 4,
+                    "returnname": "DecimalPlaces",
+                    "min": 2,
+                    "max": 12
+                },
+                {
+                    "nodename": "checkbox",
+                    "name": "Hide trailing zeros",
+                    "value": false,
+                    "returnname": "HideTrailZeros"
+                },
+                {
+                    "nodename": "checkbox",
+                    "name": "Use scientific notation (1.23E4)",
+                    "value": false,
+                    "returnname": "ScientificNotation"
+                },
+                {
+                    "nodename": "checkbox",
+                    "name": "Percent-style cells for probabilities",
+                    "nameshort": "Percent-style cells for p-values",
+                    "value": false,
+                    "returnname": "ShowProbsAsPercent"
+                }                
+            ]
+        },
+        {
+            "name":"Statistics",
+            "items": [
+                {
+                    "nodename": "list",
+                    "name": "Alpha (significance level)",
+                    "nameshort": "Alpha (sign. level)",
+                    "value": "0.1 %\\n1 %\\n2 %\\n5 %\\n10 %",
+                    "valueex": 3,
+                    "returnname": "Alpha_Idx"
+                },
+                {
+                    "nodename": "list",
+                    "name": "Missing values removal",
+                    "nameshort": "Remove missing",
+                    "value": "Automatic\\nForce casewise deletion",
+                    "valueshort": "Auto\\nForce casewise",
+                    "valueex": 0,
+                    "returnname": "MissingValuesHandling"
+                },
+                {
+                    "nodename": "numberint",
+                    "name": "Random seed",
+                    "value": 0,
+                    "returnname": "Seed"
+                }             
+            ]
+        }
+    ],
+    "decimalPrefs": {
+        "decimalSeparator": null,
+        "locale": null
+    }
+}
