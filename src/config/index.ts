@@ -80,10 +80,13 @@ export class AppConfiguration {
 
         //App logger add log for init config
         AppLogger.log("AppConfiguration", "initConfig: " + ' debugMode:' + isDebug );
+        AppLogger.log("AppConfiguration==== API URL !!!!!", "initConfig: " + ' apiUrl:' + this.apiUrl );
     }
 
   
 
+
+    
     public static isHideAccountMenu(): boolean {
         //TODO: for beta version
         //   return AppConfiguration.isAndroid();
