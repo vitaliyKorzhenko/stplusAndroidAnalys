@@ -1,3 +1,4 @@
+import React from "react";
 import {
   Apps24Regular,
   DarkTheme24Filled,
@@ -21,17 +22,11 @@ import { UserPanel } from "../userPanel";
 import { CardsPanel, CardsPanelHandle } from "../cardsBasicPanel";
 import { InputPanel } from "../inputPanel";
 import { Command } from "../../types/commands";
-import { VersionHelper } from "../../helpers/versionHelper";
 import { getAvailableLanguagesUiList, translate } from "../../localization/localization";
-import React from "react";
 import { FeedbackDialog } from "../feedbackDialog";
 import { FindCommandsInput } from "../findCommands";
 
-
 export interface MainTopPanelProps extends ToolbarProps {
-  /**
-   * The title of the application.
-   */
   changeTheme?: () => void;
   changeDriveMode?: () => void;
   changeAuth?: () => void;
@@ -39,26 +34,22 @@ export interface MainTopPanelProps extends ToolbarProps {
   isOpenInputPanel: boolean;
   openInputPanel: (currentCommand: Command) => void;
   closeInputPanel: () => void;
-  command: Command
+  command: Command;
   fileName: string;
   updateLanguage: (langCode: string) => void;
-
-
 }
 
 export const MainTopPanelSpread = (props: MainTopPanelProps) => {
-
   const [openFeedback, setOpenFeedback] = React.useState(false);
-
   const cardsPanelRef = React.useRef<CardsPanelHandle>(null);
 
   const openFeedbackDialog = () => {
     setOpenFeedback(true);
-  }
+  };
 
   const closeFeedbackDialog = () => {
     setOpenFeedback(false);
-  }
+  };
 
   const whiteButtonStyle = {
     color: 'white',
@@ -66,26 +57,20 @@ export const MainTopPanelSpread = (props: MainTopPanelProps) => {
     border: 'none',
     outline: 'none',
     cursor: 'pointer',
-    ':hover': {
-      color: 'white',
-      backgroundColor: 'transparent',
-    },
-    ':active': {
-      color: 'white',
-      backgroundColor: 'transparent',
-    },
-    ':focus': {
-      color: 'white',
-      backgroundColor: 'transparent',
-    },
   };
-  
-  const whiteIconStyle ={color: 'white'} 
+
+  const whiteIconStyle = { color: 'white' };
 
   return (
-    <Toolbar aria-label="Default" {...props} style={{ backgroundColor: tokens.colorBrandBackground }}>
-      <div style={{ display: 'flex', alignItems: 'center' }}>
-
+    <Toolbar
+      aria-label="Default"
+      {...props}
+      style={{
+        backgroundColor: tokens.colorBrandBackground,
+        flexWrap: 'wrap', // Позволяет элементам автоматически переноситься на новую строку
+      }}
+    >
+      <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
         <ToolbarButton
           aria-label="StatPlus.io"
           appearance="primary"
@@ -96,10 +81,13 @@ export const MainTopPanelSpread = (props: MainTopPanelProps) => {
             props.changeDriveMode && props.changeDriveMode();
           }}
         >
-          {'StatPlus.io '}
-          <Label style={{ color: 'red' }}>{'v' + VersionHelper.getVersion()}</Label>
+          {'StatPlus.io'}
         </ToolbarButton>
-        <Label style={whiteButtonStyle} color="white" weight="semibold"> {props.fileName}</Label>
+
+        {/* Информация о версии скрыта на маленьких экранах */}
+        <Label style={{ color: 'red', display: 'none' }}>{'v' + "1.0"}</Label>
+
+        <Label style={whiteButtonStyle}>{props.fileName}</Label>
 
         <ToolbarButton
           aria-label="Feedback"
@@ -107,75 +95,52 @@ export const MainTopPanelSpread = (props: MainTopPanelProps) => {
           icon={<Question24Regular style={whiteIconStyle} />}
           appearance="primary"
           style={whiteButtonStyle}
-
         >
-
           {translate("ui.label.feedback", 'Feedback')}
         </ToolbarButton>
-        <FindCommandsInput 
-         onSearch={(searchText) => {
-           if (cardsPanelRef.current) {
-            if (searchText && searchText.length > 0) {
-              if (cardsPanelRef.current ) {
-                cardsPanelRef.current.openWithFilter(searchText);
-              }
+
+        <FindCommandsInput
+          onSearch={(searchText) => {
+            if (cardsPanelRef.current && searchText.length > 0) {
+              cardsPanelRef.current.openWithFilter(searchText);
             }
-           }
-         }}
+          }}
         />
-        <FeedbackDialog
-          open={openFeedback}
-          closeDialog={closeFeedbackDialog}
-        />
-        {/* <SubscriptionPanel/> */}
       </div>
+
       <ToolbarDivider />
-      <div style={{ display: 'flex', alignItems: 'center', marginLeft: 'auto' }}>
-        <CardsPanel
-          openInputPanel={props.openInputPanel}
-          ref={cardsPanelRef}
-        />
+
+      <div style={{ display: 'flex', alignItems: 'center', marginLeft: 'auto', flexWrap: 'wrap' }}>
+        <CardsPanel openInputPanel={props.openInputPanel} ref={cardsPanelRef} />
         <ToolbarButton
           aria-label="Dark Theme"
-          icon={<DarkTheme24Filled  style={whiteIconStyle}/>}
+          icon={<DarkTheme24Filled style={whiteIconStyle} />}
           onClick={props.changeTheme}
           style={whiteButtonStyle}
         />
-          <Menu>
-      <MenuTrigger>
-        <ToolbarButton style={whiteButtonStyle} aria-label="ChangeLanguage" icon={<LocalLanguage24Regular style={whiteIconStyle}  />} />
-      </MenuTrigger>
 
-      <MenuPopover>
-        <MenuList
-        onSelect={(value) => {
-          console.log("Selected language: ", value);
-          // props.updateLanguage && props.updateLanguage(value)
-        
-        }}
-        >
-          {getAvailableLanguagesUiList().map((language) => (
-            <MenuItem 
-            key={language.code}
-            onClick={() => {
-              console.log('CLICK language: ');
-              // alert('Selected language: ' + language.code)
-              if (props.updateLanguage) {
-                console.log('UPDATE language: ', language.code)
-                props.updateLanguage(language.code);
+        <Menu>
+          <MenuTrigger>
+            <ToolbarButton
+              style={whiteButtonStyle}
+              aria-label="ChangeLanguage"
+              icon={<LocalLanguage24Regular style={whiteIconStyle} />}
+            />
+          </MenuTrigger>
+          <MenuPopover>
+            <MenuList>
+              {getAvailableLanguagesUiList().map((language) => (
+                <MenuItem
+                  key={language.code}
+                  onClick={() => props.updateLanguage && props.updateLanguage(language.code)}
+                >
+                  {language.display}
+                </MenuItem>
+              ))}
+            </MenuList>
+          </MenuPopover>
+        </Menu>
 
-              } else {
-                console.log('NOT DEFINED UPDATE language: ');
-              }
-             }}
-            >
-            {language.display}
-            </MenuItem>
-          ))}
-        </MenuList>
-      </MenuPopover>
-    </Menu>
-        
         <ToolbarDivider />
         <UserPanel />
         <InputPanel
@@ -184,6 +149,8 @@ export const MainTopPanelSpread = (props: MainTopPanelProps) => {
           command={props.command}
         />
       </div>
+
+      <FeedbackDialog open={openFeedback} closeDialog={closeFeedbackDialog} />
     </Toolbar>
-  )
-}
+  );
+};
