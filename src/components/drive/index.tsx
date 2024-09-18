@@ -62,10 +62,19 @@ export const Drive = (props: DriveProps) => {
     }
     useEffect(() => {
        
-        //feth user files
+        try {
+              //feth user files
         fetchUserFiles();
         fetchDataExamles();
         //fetch user files
+            
+        } catch (error) {
+            console.error("Error fetching files:", error);
+            //alert 
+            alert('Error fetching files' + JSON.stringify(error));
+            
+        }
+      
       
     }, []);
 
