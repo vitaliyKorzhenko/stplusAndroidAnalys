@@ -1,14 +1,16 @@
 import React from 'react';
 import { Label, Input, makeStyles, shorthands, tokens, useId, Image, Button, Divider } from '@fluentui/react-components';
-import { Mail24Filled, Password24Filled, GiftOpen24Filled } from "@fluentui/react-icons";
+import { Mail24Filled, Password24Filled } from "@fluentui/react-icons";
 import { auth, googleLogin } from '../../firebase';
 import { createUserWithEmailAndPassword, fetchSignInMethodsForEmail, signInWithEmailAndPassword } from 'firebase/auth';
+import { FcGoogle } from 'react-icons/fc';  // Используем правильную иконку Google
 
 const useStyles = makeStyles({
     start: {
         width: "100%",
         display: "flex",
         justifyContent: "center",
+        alignItems: "center",  // Вертикальное центрирование
         height: "100vh",
         backgroundColor: "#f5f5f5",
         padding: "10px",
@@ -16,9 +18,11 @@ const useStyles = makeStyles({
     root: {
         display: "flex",
         flexDirection: "column",
+        alignItems: "center",  // Горизонтальное центрирование
         ...shorthands.gap("20px"),
         maxWidth: "400px",
-        "> div": {
+        width: '100%',
+        '> div': {
             display: "flex",
             flexDirection: "column",
             ...shorthands.gap("2px"),
@@ -28,15 +32,12 @@ const useStyles = makeStyles({
             padding: '20px',
         }
     },
-    main: {
-        display: "grid",
-        justifyContent: "flex-start",
-        gridRowGap: tokens.spacingVerticalXXL,
+    inputField: {
+        width: '100%',
     },
-    field: {
-        display: "grid",
-        gridRowGap: tokens.spacingVerticalS,
-    },
+    buttonField: {
+        width: '100%',
+    }
 });
 
 const inputStyle = {
@@ -65,12 +66,16 @@ const buttonStyle = {
 const buttonGoogleStyle = {
     width: '100%',
     height: '50px',
-    color: '#23272b',
+    backgroundColor: 'white',
+    color: '#757575',
     fontSize: '15px',
     fontWeight: 'bold',
     border: '1px solid #1E90FF',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
     '&:hover': {
-        backgroundColor: '#23272b',
+        backgroundColor: '#f5f5f5',
     }
 };
 
@@ -89,11 +94,9 @@ export const Login = (props: LoginProps) => {
         try {
             console.log('email', email);
             console.log('password', password);
-    
-            // Получаем методы входа для email
+
             const signInMethods = await fetchSignInMethodsForEmail(auth, email);
-            
-            // Если методы входа для email найдены, пытаемся войти
+
             if (signInMethods.length > 0) {
                 if (!signInMethods.includes('password')) {
                     throw new Error('Invalid sign-in method. Please use another method like Google.');
@@ -102,7 +105,6 @@ export const Login = (props: LoginProps) => {
                     props.changeAuth();
                 }
             } else {
-                // Если email не зарегистрирован, создаем пользователя
                 await createUserWithEmailAndPassword(auth, email, password);
                 await signInWithEmailAndPassword(auth, email, password);
                 props.changeAuth();
@@ -111,7 +113,6 @@ export const Login = (props: LoginProps) => {
             console.error('Error', error.message || error);
         }
     };
-    
 
     const loginWithGoogle = async () => {
         try {
@@ -128,48 +129,45 @@ export const Login = (props: LoginProps) => {
 
     return (
         <div className={styles.start}>
-            <div>
-                <Image
-                    alt="Login"
-                    src="/statplus.png"
-                    style={{ width: '100%', height: 'auto', maxWidth: '400px' }}
-                />
-            </div>
             <div className={styles.root}>
+            <Image
+    alt="Login"
+    src="/statplus.png"
+    style={{ maxWidth: '400px', maxHeight: '100px' }}
+  />
                 <div>
                     <Label size="large" htmlFor={beforeId} style={{ fontSize: '25px', color: '#23272b' }}>
-                        Sign in with StatPlus.io account
+                        Sign in with StatPlus account
                     </Label>
                 </div>
-                <div>
-                    <Input size="medium" contentBefore={<Mail24Filled />} id={emailId} type='email' placeholder='Email'
+                <div className={styles.inputField}>
+                    <Input size="medium" contentBefore={<Mail24Filled />} id={emailId} type='email' placeholder='Email Address'
                         onChange={(e) => setEmail(e.target.value)} style={inputStyle} />
                 </div>
-                <div>
+                <div className={styles.inputField}>
                     <Input size="medium" contentBefore={<Password24Filled />} id={beforeId} type='password'
                         placeholder='Password' onChange={(e) => setPassword(e.target.value)} style={inputStyle} />
                 </div>
-                <div>
+                <div className={styles.buttonField}>
                     <Button appearance="primary" size="large" style={buttonStyle} onClick={signInOrSignUpWithEmailPassword}>
                         Sign in
                     </Button>
                 </div>
-                <div style={{ padding: '5x' }}>
-    <Divider style={{ margin: '5px 0', color: '#23272b' }}>OR</Divider>
-</div>
-<div style={{ padding: '5px', display: 'flex', justifyContent: 'center' }}>
-    <Button
-        size="large"
-        appearance="outline"
-        style={{ ...buttonGoogleStyle, width: '100%' }}  // ширина кнопки 100% для адаптивности
-        icon={<GiftOpen24Filled />}
-        iconPosition="before"
-        onClick={loginWithGoogle}
-    >
-        Continue with Google
-    </Button>
-</div>
-
+                {/* <div style={{ padding: '5px' }}>
+                    <Divider style={{ margin: '5px 0', color: '#23272b' }}>OR</Divider>
+                </div> */}
+                <div className={styles.buttonField}>
+                    <Button
+                        size="large"
+                        appearance="outline"
+                        style={buttonGoogleStyle}
+                        icon={<FcGoogle />}  // Правильная иконка Google
+                        iconPosition="before"
+                        onClick={loginWithGoogle}
+                    >
+                        Continue with Google
+                    </Button>
+                </div>
             </div>
         </div>
     );
