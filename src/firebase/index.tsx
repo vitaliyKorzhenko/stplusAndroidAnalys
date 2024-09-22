@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import 'firebase/auth';
-import { GoogleAuthProvider, getAuth, sendPasswordResetEmail as sendResetEmail,signInWithPopup } from 'firebase/auth';
+import { GoogleAuthProvider, fetchSignInMethodsForEmail, getAuth, sendPasswordResetEmail as sendResetEmail,signInWithPopup } from 'firebase/auth';
 
 const firebaseConfig = {
     apiKey: "AIzaSyC6aCAwXL8AwkdrUgsigbCmI1x0XSs5s6A",
@@ -43,6 +43,18 @@ export async function googleLogin() {
 export async function logout() {
     try {
         await auth.signOut();
+    } catch (error) {
+        throw error;
+    }
+}
+
+//fetchSignInMethodsForEmail
+
+export async function fetchSignInMethodsForEmailForUser(email: string) {
+    try {
+        const res = await fetchSignInMethodsForEmail(auth, email);
+        console.log('res', res);
+        return res;
     } catch (error) {
         throw error;
     }

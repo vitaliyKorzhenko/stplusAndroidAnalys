@@ -1,7 +1,7 @@
 import React from 'react';
 import { Label, Input, makeStyles, shorthands, tokens, useId, Image, Button, Divider } from '@fluentui/react-components';
 import { Mail24Filled, Password24Filled } from "@fluentui/react-icons";
-import { auth, googleLogin } from '../../firebase';
+import { auth, fetchSignInMethodsForEmailForUser, googleLogin } from '../../firebase';
 import { createUserWithEmailAndPassword, fetchSignInMethodsForEmail, signInWithEmailAndPassword } from 'firebase/auth';
 import { FcGoogle } from 'react-icons/fc';  // Используем правильную иконку Google
 
@@ -94,25 +94,29 @@ export const Login = (props: LoginProps) => {
         try {
             console.log('email', email);
             console.log('password', password);
-
-            const signInMethods = await fetchSignInMethodsForEmail(auth, email);
-
-            if (signInMethods.length > 0) {
-                if (!signInMethods.includes('password')) {
-                    throw new Error('Invalid sign-in method. Please use another method like Google.');
-                } else {
+    
+            // Пытаемся войти
+            await signInWithEmailAndPassword(auth, email, password);
+            props.changeAuth();
+        } catch (error: any) {
+            console.error('Error during sign-in:', error.message || error);
+    
+            // Если ошибка "email-already-in-use", создаем нового пользователя
+            if (error.code === 'auth/user-not-found') {
+                try {
+                    // Регистрируем нового пользователя
+                    await createUserWithEmailAndPassword(auth, email, password);
+                    // Сразу же выполняем вход
                     await signInWithEmailAndPassword(auth, email, password);
                     props.changeAuth();
+                } catch (registerError: any) {
+                    console.error('Error during registration:', registerError.message || registerError);
                 }
-            } else {
-                await createUserWithEmailAndPassword(auth, email, password);
-                await signInWithEmailAndPassword(auth, email, password);
-                props.changeAuth();
             }
-        } catch (error: any) {
-            console.error('Error', error.message || error);
         }
     };
+    
+    
 
     const loginWithGoogle = async () => {
         try {
