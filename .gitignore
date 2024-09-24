@@ -36,3 +36,8 @@ node_modules
 
 #add zip files to ignore
 *.zip
+
+#add env
+.env
+
+importBuilds.js
