@@ -11,6 +11,7 @@ import { UserProfile } from './users/index'
 import { ProgressBarProvider } from './components/progressBar/progressContext'
 import { MainSpread } from './components/spread/index'
 import { activateLanguage } from './localization/localization'
+import { getRedirectResult } from 'firebase/auth'
 function App() {
 
 
@@ -63,40 +64,69 @@ function App() {
     }
   };
 
-
   useEffect(() => {
     // init config
     AppConfiguration.initConfig(false);
-
+    
     activateLanguage(currentLanguage ? currentLanguage : 'en');
+
+    // Проверка результата редиректа
+    const handleRedirectResult = async () => {
+        try {
+            const result = await getRedirectResult(auth);
+            console.log('Redirect result:', result);
+            if (result) {
+                const user = result.user;
+                console.log('User after redirect:', user);
+                const email = user.email ? user.email : '';
+                // Обработка успешной аутентификации
+                ApiUserNode.loginWithEmailNode(email).then((res) => {
+                    console.log('res', res);
+                    if (!res) {
+                        console.log('User not found');
+                    }
+                    LocalStorageHelper.setUserId(res.toString());
+                    UserProfile.setCurrentUserId(res.toString());
+                }).catch((error) => {
+                    console.log('error', error);
+                });
+                setIsAuth(true);
+            }
+        } catch (error) {
+            console.error("Redirect error: ", error);
+        }
+    };
+
+    handleRedirectResult(); // Проверка редиректа при монтировании
+
     // Listen for changes in the authentication state
     const unsubscribe = auth.onAuthStateChanged((user) => {
-      if (user) {
-        console.log('user', user);
-        const email = user.email ? user.email : '';
-        // User is signed in
-        ApiUserNode.loginWithEmailNode(email).then((res) => {
-          console.log('res', res);
-          if (!res) {
-            console.log('User not found');
-          }
-          LocalStorageHelper.setUserId(res.toString());
-          UserProfile.setCurrentUserId(res.toString());
-          
+        console.log("Auth state changed", user);
+        if (user) {
+            console.log('user', user);
+            const email = user.email ? user.email : '';
+            // Обработка, если пользователь вошел через почту и пароль или редирект
+            ApiUserNode.loginWithEmailNode(email).then((res) => {
+                console.log('res', res);
+                if (!res) {
+                    console.log('User not found');
+                }
+                LocalStorageHelper.setUserId(res.toString());
+                UserProfile.setCurrentUserId(res.toString());
+            }).catch((error) => {
+                console.log('error', error);
+            });
+            setIsAuth(true);
+        } else {
+            // User is signed out
+            setIsAuth(false);
         }
-        ).catch((error) => {
-          console.log('error', error);
-        }); 
-        setIsAuth(true);
-      } else {
-        // User is signed out
-        setIsAuth(false);
-      }
     });
 
     // Clean up the subscription when the component unmounts
     return () => unsubscribe();
-  }, []);
+}, []);
+
 
 
   if (!isAuth) {
@@ -111,8 +141,8 @@ function App() {
     if (driveMode) {
      return (
       <FluentProvider theme={theme} style={{
-        height: '100%',
         width: '100%',
+        height: '100%'
       }}>
       <ProgressBarProvider>
       <Drive

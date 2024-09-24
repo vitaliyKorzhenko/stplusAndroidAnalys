@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import 'firebase/auth';
-import { GoogleAuthProvider, fetchSignInMethodsForEmail, getAuth, sendPasswordResetEmail as sendResetEmail,signInWithPopup } from 'firebase/auth';
+import { GoogleAuthProvider, fetchSignInMethodsForEmail, getAuth, sendPasswordResetEmail as sendResetEmail,signInWithPopup, signInWithRedirect } from 'firebase/auth';
 
 const firebaseConfig = {
     apiKey: "AIzaSyC6aCAwXL8AwkdrUgsigbCmI1x0XSs5s6A",
@@ -33,10 +33,16 @@ export async function sendPasswordResetEmail(email: string) {
 
 export async function googleLogin() {
     try {
-      const res = await signInWithPopup(auth, new GoogleAuthProvider());
-      return res.user;
+        console.log('googleLogin');
+        const provider = new GoogleAuthProvider();
+        const result = await signInWithPopup(auth, provider);
+        
+        // Пользователь успешно вошел в систему
+        console.log('User logged in:', result.user);
+        return result.user; // Вернуть пользователя
     } catch (error) {
-      throw error;
+        console.error("Google login error: ", error);
+        throw error; // Перебрасываем ошибку
     }
 }
 

@@ -3,15 +3,16 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta http-equiv="Content-Security-Policy" content="default-src *; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; media-src *; img-src 'self' data:">
-    
-
-    <!-- Добавляем политику безопасности контента -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://* http://* 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src *; img-src 'self' data:;">
-
-    <title>Vite + React + TS</title>
-    <script type="module" crossorigin src="/assets/index-8vZYC12x.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-Dglapf1Q.css">
+    <meta http-equiv="Content-Security-Policy" content="
+        default-src 'self' https://* http://*;
+        script-src 'self' 'unsafe-inline' https://apis.google.com;
+        style-src 'self' 'unsafe-inline';
+        media-src *;
+        img-src 'self' data:;
+    ">
+    <title>StatPlus</title>
+    <script type="module" crossorigin src="/assets/index-QKL4caVt.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-Db0DcK8T.css">
   </head>
   <body>
     <div id="root"></div>

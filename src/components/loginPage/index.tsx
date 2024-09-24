@@ -118,7 +118,7 @@ export const Login = (props: LoginProps) => {
     
     
 
-    const loginWithGoogle = async () => {
+    const loginWithGoogleOld = async () => {
         try {
             const popupOptions = "width=500,height=600,scrollbars=yes";
             const googlePopup = window.open('', 'GoogleLogin', popupOptions);
@@ -127,6 +127,18 @@ export const Login = (props: LoginProps) => {
             props.changeAuth();
             return res.user;
         } catch (error) {
+            throw error;
+        }
+    };
+
+    const loginWithGoogle = async () => {
+        try {
+            console.log('Start Google login');
+            const user = await googleLogin(); // Вызов функции для аутентификации
+            console.log('Google login success', user);
+            props.changeAuth(); // Обновляем состояние аутентификации
+        } catch (error) {
+            console.error("Login error: ", error);
             throw error;
         }
     };
