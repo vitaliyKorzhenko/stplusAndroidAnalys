@@ -12,6 +12,7 @@ import { ProgressBarProvider } from './components/progressBar/progressContext'
 import { MainSpread } from './components/spread/index'
 import { activateLanguage } from './localization/localization'
 import { getRedirectResult } from 'firebase/auth'
+import LocalFileHelper from './helpers/localFileHelper'
 function App() {
 
 
@@ -122,6 +123,21 @@ function App() {
             setIsAuth(false);
         }
     });
+
+    //init file system
+    try {
+      console.log("Try to init file system");
+      LocalFileHelper.initFileSystem();
+      //create test file
+      LocalFileHelper.createTestFile();
+      //list files
+      let names:string[] = LocalFileHelper.listFiles();
+      //alert
+      alert('Files found: ' + names);
+    } catch (error) {
+      console.log('Local FILE SYSTEM', error);
+      
+    }
 
     // Clean up the subscription when the component unmounts
     return () => unsubscribe();

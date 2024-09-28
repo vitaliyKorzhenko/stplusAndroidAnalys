@@ -19,7 +19,8 @@
       "android"
     ],
     "plugins": {
-      "cordova-plugin-inappbrowser": {}
+      "cordova-plugin-inappbrowser": {},
+      "cordova-plugin-file": {}
     }
   },
   "devDependencies": {
