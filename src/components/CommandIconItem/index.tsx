@@ -25,7 +25,8 @@ const CustomIcon: React.FC <CustomIconProps> = (props) => {
   let path = props.isLight ? iconLightPath : iconDarkPath;
   console.log('Icon path:', path);
   return (
-    <Image src={path} className={classes.icon} />
+    <img src={path} className={classes.icon} alt="icon" />
+    //<Image src={path} className={classes.icon} />
   );
 };
 
