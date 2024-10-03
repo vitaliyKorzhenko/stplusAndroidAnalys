@@ -1,0 +1,23 @@
+
+private needsResize = true;
+
+onResize = () => {
+    if (!this.needsResize)
+        return;
+    /*if (!$("#ss").is(':empty')){
+        getSpreadJS().getActiveSheet().isPaintSuspended(true);
+    }* /
+    console.log(this.refFormulaBar, this.refFormulaBar.clientHeight, this.refSpread, this.refSpread.clientHeight);
+    var height = document.documentElement.clientHeight - this.refFormulaBar.clientHeight;
+    ? 50px 
+    if (typeof app !== "undefined")
+        height = height - app.clientHeight;
+    $("#ss").height(height);
+    var width = document.documentElement.clientWidth - (($(".rightMenuPanel").is(":visible") ) ? $(".rightMenuPanel").width() : 0);
+    $("#ss").width(width);
+    //$("#formulaBar").width(width - 5);
+    if (!$("#ss").is(':empty')) {
+    //    getSpreadJS().getActiveSheet().isPaintSuspended(false);
+        getSpreadJS()._doResize();
+    }
+  }
