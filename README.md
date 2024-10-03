@@ -33,5 +33,8 @@ cordova run android (in emulator chromebook)
 cordova build android (build apk file in outputs for phone)
 
 
+#Deploy To Server
+# pm2 resurrect
+(посмотреть все процессы)
 
 

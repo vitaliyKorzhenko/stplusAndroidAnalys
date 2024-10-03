@@ -1,7 +1,8 @@
 import {
   OpenRegular,
   DocumentRegular,
-  TextDescription24Regular
+  TextDescription24Regular,
+  Info20Filled
 } from "@fluentui/react-icons";
 import {
   PresenceBadgeStatus,
@@ -19,6 +20,10 @@ import {
   TableColumnId,
   DataGridCellFocusMode,
   tokens,
+  PopoverTrigger,
+  PopoverSurface,
+  Popover,
+  makeStyles,
 } from "@fluentui/react-components";
 import { IExampleFileNodeModel } from "../../types/files";
 import { translate } from "../../localization/localization";
@@ -40,7 +45,6 @@ type FileDescriptionCell = {
 
 type Item = {
   file: FileCell;
-  author: AuthorCell;
 description: FileDescriptionCell;
 };
 
@@ -49,10 +53,8 @@ function parseNodeModelsToItems(files: IExampleFileNodeModel[]): Item[] {
   let author2: AuthorCell = { label: "Alex Simachov", status: 'busy' };
   
   return files.map((file: IExampleFileNodeModel) => {
-    let mathRandom = Math.round(Math.random());
     return {
       file: { label: file.file_name, icon: <DocumentRegular /> },
-      author:  mathRandom % 2 == 1 ? author1 : author2,
       description: { label: file.description, icon: <TextDescription24Regular/> }
     };
   });
@@ -70,6 +72,57 @@ const getCellFocusMode = (columnId: TableColumnId): DataGridCellFocusMode => {
       return "cell";
   }
 };
+
+const useStyles = makeStyles({
+  contentHeader: {
+    marginTop: "0",
+  },
+});
+
+const truncateText = (text: string, maxLength: number) => {
+  if (text.length > maxLength) {
+    return text.slice(0, maxLength) + "...";
+  }
+  return text;
+};
+
+interface PropoverProps {
+  item: Item
+}
+
+const PropoverContent = ({ description, header }: { description: string, header: string }) => {
+  const styles = useStyles();
+  
+  return (
+    <div
+      style={{
+        maxWidth: '300px',   // Ограничение ширины
+        padding: '10px',     // Отступы внутри прямоугольника
+        backgroundColor: tokens.colorBrandBackground2, // Цвет фона (бренд)
+        color: tokens.colorNeutralForeground1, // Цвет текста        overflowWrap: 'break-word', // Перенос слов, если они слишком длинные
+      }}
+    >
+      {header && <h3 className={styles.contentHeader}>{header}</h3>}
+      {description && <div>{description}</div>}
+    </div>
+  );
+};
+
+
+export const PropoverDescription = (props: PropoverProps) => (
+  <Popover {...props}>
+    <PopoverTrigger disableButtonEnhancement>
+      <Button icon={<Info20Filled /> } aria-label="More info" />
+    </PopoverTrigger>
+
+    <PopoverSurface tabIndex={-1}>
+      <PropoverContent 
+      description={props.item.description.label} 
+      header={props.item.file.label}
+       />
+    </PopoverSurface>
+  </Popover>
+);
 
 export interface FilesExampleGridProps {
   files: IExampleFileNodeModel[];
@@ -111,34 +164,11 @@ export const FilesExampleGrid = (props: FilesExampleGridProps) => {
           props.setFileNameHandler && props.setFileNameHandler(item.file.label);
           props.changeDriveMode && props.changeDriveMode();
         }}
+        onMouseEnter={(e) => e.currentTarget.style.textDecoration = 'underline'} // добавляем подчеркивание при наведении
+        onMouseLeave={(e) => e.currentTarget.style.textDecoration = 'none'} // убираем подчеркивание
       >
         {item.file.label}
       </a>
-          </TableCellLayout>
-        );
-      },
-    }),
-    createTableColumn<Item>({
-      columnId: "author",
-      compare: (a, b) => {
-        return a.author.label.localeCompare(b.author.label);
-      },
-      renderHeaderCell: () => {
-        return translate("file.author", 'Author');
-      },
-      renderCell: (item) => {
-        return (
-          <TableCellLayout
-            media={
-              <Avatar
-                aria-label={item.author.label}
-                name={item.author.label}
-                badge={{ status: item.author.status }}
-              />
-              
-            }
-          >
-            {item.author.label}
           </TableCellLayout>
         );
       },
@@ -152,36 +182,19 @@ export const FilesExampleGrid = (props: FilesExampleGridProps) => {
           return translate('file.description', 'Description');
           },
           renderCell: (item) => {
+          if (item.description.label && item.description.label.length > 0) {
+
           return (
               <TableCellLayout>
-              {item.description.label}
+              <PropoverDescription item={item} />
+              {truncateText(item.description.label, 50)}
               </TableCellLayout>
           );
+        } else {
+          return (<></>)
+        }
           },
       }),   
-    createTableColumn<Item>({
-      columnId: "singleAction",
-      renderHeaderCell: () => {
-        return "";
-      },
-      renderCell: (item: Item) => {
-        return <Button
-        style={{
-          width: "100%",
-        
-          color: "#1E90FF",
-  
-        }}
-        onClick={() => {
-          props.setFileNameHandler && props.setFileNameHandler(item.file.label);
-          props.changeDriveMode && props.changeDriveMode();
-         }}
-         icon={<OpenRegular />}>
-          {translate('ui.label.open', 'Open')}
-          </Button>;
-      },
-    }),
-   
   ];
 
 
@@ -191,7 +204,14 @@ export const FilesExampleGrid = (props: FilesExampleGridProps) => {
       columns={columns}
       sortable
       getRowId={(item) => item.file.label}
-      style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}   
+      style={{ 
+        width: '100%', 
+        height: '100%', 
+        display: 'flex', 
+        flexDirection: 'column',
+        overflow: 'auto' // Включите скроллинг
+
+       }}   
     >
       <DataGridHeader>
         <DataGridRow

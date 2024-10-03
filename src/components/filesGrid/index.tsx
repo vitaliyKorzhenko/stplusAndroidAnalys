@@ -117,33 +117,37 @@ export const FilesGrid = (props: FilesGridProps) => {
       renderCell: (item) => {
         return (
           <TableCellLayout 
-          media={item.file.icon}
-          style={{
-            fontWeight: "bold",
-            fontStyle: "italic",
-            color: tokens.colorBrandBackground,
-
-          }}
+            media={item.file.icon}
+            style={{
+              fontWeight: "bold",
+              fontStyle: "italic",
+              color: tokens.colorBrandBackground,
+            }}
           >
-              <a
-        href="#"
-        style={{
-          color: tokens.colorBrandBackground,
-          textDecoration: 'none',
-          padding: '2px 4px',
-          borderRadius: '4px',
-          fontWeight: 'bold',
-        }}
-        onClick={() => {
-          props.setFileNameHandler && props.setFileNameHandler(item.file.label);
-          props.changeDriveMode && props.changeDriveMode();
-        }}
-      >
-        {item.file.label}
-      </a>
+            <a
+              href="#"
+              style={{
+                color: tokens.colorBrandBackground,
+                textDecoration: 'none',
+                padding: '2px 4px',
+                borderRadius: '4px',
+                fontWeight: 'bold',
+                display: 'flex', // для размещения текста и иконки рядом
+                alignItems: 'center', // выравнивание по вертикали
+              }}
+              onClick={() => {
+                props.setFileNameHandler && props.setFileNameHandler(item.file.label);
+                props.changeDriveMode && props.changeDriveMode();
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.textDecoration = 'underline'} // добавляем подчеркивание при наведении
+              onMouseLeave={(e) => e.currentTarget.style.textDecoration = 'none'} // убираем подчеркивание
+            >
+              {item.file.label}
+            </a>
           </TableCellLayout>
         );
-      },
+      }
+      
     }),
    
     createTableColumn<Item>({
@@ -187,30 +191,6 @@ export const FilesGrid = (props: FilesGridProps) => {
             </TableCellLayout>
         )
         return item.fileSize?.label;
-      },
-    }),
-  
-    createTableColumn<Item>({
-      columnId: "singleAction",
-      renderHeaderCell: () => {
-        return "";
-      },
-      renderCell: (item: Item) => {
-        return <Button
-        style={{
-          width: "100%",
-        
-          color: "#1E90FF",
-  
-        }}
-         icon={<OpenRegular />}
-         onClick={() => {
-          props.setFileNameHandler && props.setFileNameHandler(item.file.label);
-          props.changeDriveMode && props.changeDriveMode();
-         }}
-         >
-                 {translate('ui.label.open', 'Open')}
-          </Button>;
       },
     }),
     createTableColumn<Item>({
