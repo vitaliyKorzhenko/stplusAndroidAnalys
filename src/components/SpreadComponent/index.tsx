@@ -36,7 +36,6 @@ import { spreadDefFont, spreadDefFontSize } from './spread-font';
 import { ISpreadSearchInformation } from './types-find';
 import { SpreadAppContext, SpreadContextType } from './SpreadContext';
 
-import config from '../../config.json';
 import { ContextualMenuSpread } from './menu';
 
 // Global functions defined on some platforms (legacy Mac, iOS code)
@@ -64,6 +63,9 @@ export interface CoreResultsParserOpts {
 
 export class SpreadComponent extends React.Component<ISpreadComponentProps, ISpreadComponentState>{
 
+
+  //not use config
+  private disableContextMenus: boolean = false;
   // References
   private refSpread = React.createRef<HTMLDivElement>();
   private refFormulaBar = React.createRef<HTMLDivElement>();
@@ -157,7 +159,7 @@ export class SpreadComponent extends React.Component<ISpreadComponentProps, ISpr
     catch (e) {
      /* Something went wrong, do not show contextual menu */
     }
-    if (!config.disableContextMenus && !sheetIsEditing) {
+    if (!this.disableContextMenus && !sheetIsEditing) {
       event.preventDefault();
       const xPos = event.pageX, yPos = event.pageY;
       if (this.refSpreadMenu.current)
