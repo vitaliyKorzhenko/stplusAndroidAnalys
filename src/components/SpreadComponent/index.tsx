@@ -21,7 +21,6 @@ import { ISpreadComponentProps, ISpreadComponentState, ISpreadSelectionMode, Spr
 
 import React, {MouseEventHandler, useEffect} from 'react';
 
-import { isMac } from 'office-ui-fabric-react';
 
 import d3 from 'd3';
 import * as d3Tip from "d3-tip"
@@ -39,8 +38,8 @@ import { SpreadAppContext, SpreadContextType } from './SpreadContext';
 import { ContextualMenuSpread } from './menu';
 
 // Global functions defined on some platforms (legacy Mac, iOS code)
-let hostPrefs = null;
-let hostHandlesPasteManually = undefined;
+let hostPrefs: any = null;
+let hostHandlesPasteManually: any = undefined;
 
 // Namespace - (different in SpreadJS 8 / 9 / 10, so better to use a shortcut)
 const spreadNS = GcSpread.Sheets;
@@ -66,6 +65,9 @@ export class SpreadComponent extends React.Component<ISpreadComponentProps, ISpr
 
   //not use config
   private disableContextMenus: boolean = false;
+
+  //is not Mac
+  private isMac: boolean = false;
   // References
   private refSpread = React.createRef<HTMLDivElement>();
   private refFormulaBar = React.createRef<HTMLDivElement>();
@@ -129,8 +131,8 @@ export class SpreadComponent extends React.Component<ISpreadComponentProps, ISpr
   }
 
   private spreadKeyDown(e: KeyboardEvent) {
-    const _isCtrl = isMac() ? e.metaKey : e.ctrlKey;
-    const _isZoomModifier = isMac() ? e.metaKey : e.ctrlKey && e.altKey;
+    const _isCtrl = this.isMac ? e.metaKey : e.ctrlKey;
+    const _isZoomModifier = this.isMac ? e.metaKey : e.ctrlKey && e.altKey;
     // Cmd+F (Ctrl+F) - open Find dialog
     if (e.keyCode == 70 && _isCtrl) {
       e.preventDefault();
@@ -1278,3 +1280,4 @@ export class SpreadComponent extends React.Component<ISpreadComponentProps, ISpr
 }
 
 SpreadComponent.contextType = SpreadAppContext;
+
