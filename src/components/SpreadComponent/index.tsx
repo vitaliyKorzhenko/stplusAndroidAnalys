@@ -50,7 +50,7 @@ export function newId(prefix='id') {
     return lastId == 1 ? prefix : `${prefix}${lastId}`;
 }
 
-function isNumeric(n) {
+function isNumeric(n: any) {
   return !isNaN(parseFloat(n)) && isFinite(n);
 }
 
@@ -79,7 +79,7 @@ export class SpreadComponent extends React.Component<ISpreadComponentProps, ISpr
   private refToolbarFormat = React.createRef<SpreadToolbarFormat>();
   
   // Find in Spread 
-  private refDialogFind = React.createRef<SpreadDialogFind>();
+  private refDialogFind = React.createRef<typeof SpreadDialogFind>();
 
   // Contextual Menu
   private refSpreadMenu = React.createRef<ContextualMenuSpread>();
@@ -91,7 +91,7 @@ export class SpreadComponent extends React.Component<ISpreadComponentProps, ISpr
   /* selected/focused charts, used for copy to clipboard */
   private focusedCharts = [];
 
-  constructor(props, context) {
+  constructor(props: ISpreadComponentProps, context: any) {
     super(props);
     console.log("SPREAD CONTEXT",context);
     const contextValue: SpreadContextType = context;
@@ -230,7 +230,7 @@ export class SpreadComponent extends React.Component<ISpreadComponentProps, ISpr
     // bind event when selection is changed
     this.spread.bind(spreadNS.Events.SelectionChanged,this.selectionChanged );
     this.spread.bind(spreadNS.Events.ActiveSheetChanged, this.activeSheetChanged);
-    this.spread.bind(spreadNS.Events.SheetTabClick, (sender, args) => {
+    this.spread.bind(spreadNS.Events.SheetTabClick, (sender: any, args: any) => {
       if (args.sheet === null && args.sheetName === null) {
         setTimeout(()=> {
           const activeSheet = this.spread.getActiveSheet();
@@ -263,7 +263,7 @@ export class SpreadComponent extends React.Component<ISpreadComponentProps, ISpr
 
   }
 
-  private clipboardPasted = (sender, args: {
+  private clipboardPasted = (sender: any, args: {
     sheet: GcSpread.Sheets.Sheet, // The sheet that triggered the event.
     sheetName: string, // The sheet's name.
     cellRange: GcSpread.Sheets.Range, // The range that was pasted.
@@ -388,8 +388,8 @@ export class SpreadComponent extends React.Component<ISpreadComponentProps, ISpr
   public loadDataFromJson = (jsonData: string | object): boolean => {
     console.log('-----load Data From JSON------', this);
 
-    if (!jsonData)
-      return;
+    if (!jsonData) return false;
+
     const spreadJSON = (typeof jsonData === "string") ? JSON.parse(jsonData) : jsonData;
     this.spread.fromJSON(spreadJSON.workbook);
     const sheet = this.spread.getActiveSheet();
@@ -431,7 +431,7 @@ export class SpreadComponent extends React.Component<ISpreadComponentProps, ISpr
     return height;
   }
 
-  getColsWidth = (from, to) => {
+  getColsWidth = (from: number, to: number) => {
     const sheet = this.spread.getActiveSheet();
     if (from < 0 || to >= sheet.getColumnCount() || from > to)
       return 0;
@@ -444,7 +444,7 @@ export class SpreadComponent extends React.Component<ISpreadComponentProps, ISpr
 
   // Create a chart from "options" JSON to the "sheet"
   private createChart = (sheet: GcSpread.Sheets.Sheet, options: any) => {
-    var chartContainer;
+    var chartContainer: any;
     var id = options.name ? options.name : options.title + sheet.getFloatingObjects().length;
     /* fast fix if same name happens */
     while (sheet.findFloatingObject(id) != null)
@@ -463,7 +463,7 @@ export class SpreadComponent extends React.Component<ISpreadComponentProps, ISpr
         sheet.setColumnCount(options.col + options.cwidth + 10);
     } catch (err) { }
 
-    const recreateChart = (container, options, zoom) => {
+    const recreateChart = (container: any, options: any, zoom: any) => {
       if (container) {
         chartContainer.innerHTML = "";
         chartD3 = new D3Chart(d3.select(chartContainer));
@@ -473,24 +473,24 @@ export class SpreadComponent extends React.Component<ISpreadComponentProps, ISpr
       }
     };
 
-    const updateChart = (container, options, zoom) => {
+    const updateChart = (container: any, options: any, zoom: any) => {
       recreateChart(container, options, zoom);
       if (container) floatChart["chartContainer"] = chartContainer;
     };
-    sheet.bind(spreadNS.Events.CustomFloatingObjectLoaded, (sender, args) => {
+    sheet.bind(spreadNS.Events.CustomFloatingObjectLoaded, (sender: any, args: any) => {
       if (args.customFloatingObject == null || args.customFloatingObject.name() !== id) {
         return;
       }
       chartContainer = args.element;
       // Context menu
-      chartContainer.addEventListener('contextmenu', e => {
+      chartContainer.addEventListener('contextmenu', (e: any) => {
         e.preventDefault();
         this.setVisibleToolbarFormat(true);
       });
       updateChart(chartContainer, floatChart["options"], this.getZoom(sheet) / 100.0);
     });
-    sheet.bind(spreadNS.Events.FloatingObjectRemoved, (sender, args) => { this.panelChartEditDisable(); });
-    sheet.bind(spreadNS.Events.FloatingObjectChanged, (sender, args) => {
+    sheet.bind(spreadNS.Events.FloatingObjectRemoved, (sender: any, args: any) => { this.panelChartEditDisable(); });
+    sheet.bind(spreadNS.Events.FloatingObjectChanged, (sender: any, args: any) => {
       /* update selected charts array */
       if (args.propertyName == "isSelected") {
         if (args.floatingObject._isSelected) {
@@ -988,7 +988,7 @@ export class SpreadComponent extends React.Component<ISpreadComponentProps, ISpr
   }  
 
   // findNext() last position
-  private findCache;
+  private findCache: any; 
 
   // Find a text in a worksheet or a workbook
   // TODO: bad legacy code, namely

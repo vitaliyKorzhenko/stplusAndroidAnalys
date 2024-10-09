@@ -1,92 +1,79 @@
-/*
+import * as React from 'react';
+import { Menu, MenuTrigger, MenuPopover, MenuList, MenuItem } from '@fluentui/react-components';
+import { Clipboard } from './clipboard';
 
-    Spread contextual menu.
-
-*/
-
-import React from 'react';
-
-import { ContextualMenu, DirectionalHint, IContextualMenuItem, Point } from 'office-ui-fabric-react';
-
-import { Clipboard } from './clipboard'
-
-export interface ISpreadMenuProps {
-}
+export interface ISpreadMenuProps {}
 
 export interface ISpreadMenuState {
   visible: boolean;
-  position: Point;
-  spread: GcSpread.Sheets.Spread;
+  position: { x: number; y: number } | null; // Объект для позиции
+  spread: GcSpread.Sheets.Spread | null;
 }
 
-export class ContextualMenuSpread extends React.Component<ISpreadMenuProps, ISpreadMenuState>{
+export class ContextualMenuSpread extends React.Component<ISpreadMenuProps, ISpreadMenuState> {
+  private clipboardAvailable = Clipboard.isSupported();
 
-  constructor(props) {
+  constructor(props: ISpreadMenuProps) {
     super(props);
     this.state = {
       visible: false,
       position: null,
       spread: null,
-    }
+    };
   }
-
-  private ref = React.createRef();
-
-  private clipboardAvailable = Clipboard.isSupported();
 
   render() {
-    let items: IContextualMenuItem[] = [];
-    const sheet = this.state.visible && this.state.spread?.getActiveSheet();
-    //
-    if (sheet) {
-      if (this.clipboardAvailable) {
-        const itemsClipboard = [
-          {
-            key: 'contextmenu.copy',
-            name: "Copy",
-            iconProps: { iconName: "Copy" },
-            onClick: async () => {
-              await Clipboard.copy(sheet._doCopy(false));
-            }
-          },
-          {
-            key: 'contextmenu.cut',
-            name: "Cut",
-            iconProps: { iconName: "Cut" },
-            onClick: async () => {
-              await Clipboard.copy(sheet._doCut(false));
-            }
-          },
-          {
-            key: 'contextmenu.paste',
-            name: "Paste",
-            iconProps: { iconName: "Paste" },
-            onClick: () => {
-              sheet._doPaste();
-            }
-          }
-        ];
-        items.push(...itemsClipboard);
-      }
-    }
+    const { visible, position, spread } = this.state;
+    const sheet = visible && spread?.getActiveSheet();
 
-    return <ContextualMenu
-      shouldFocusOnMount={true}
-      hidden={!this.state.visible || !this.state.spread}
-      onDismiss={() => this.setState({ visible: false })}
-      target={this.state.position}
-      directionalHint={DirectionalHint.rightTopEdge}
-      items={items}
-    />
+    return (
+      <Menu open={visible} onOpenChange={(e, data) => this.setState({ visible: data.open })}>
+        <MenuTrigger>
+          <div />
+        </MenuTrigger>
+        {visible && position && sheet ? ( // Убедимся, что все значения определены
+          <MenuPopover style={{ position: 'absolute', top: position.y, left: position.x }}>
+            <MenuList>
+              {this.clipboardAvailable && (
+                <>
+                  <MenuItem
+                    icon={<span className="icon-copy" />}
+                    onClick={async () => {
+                      await Clipboard.copy(sheet._doCopy(false));
+                    }}
+                  >
+                    Copy
+                  </MenuItem>
+                  <MenuItem
+                    icon={<span className="icon-cut" />}
+                    onClick={async () => {
+                      await Clipboard.copy(sheet._doCut(false));
+                    }}
+                  >
+                    Cut
+                  </MenuItem>
+                  <MenuItem
+                    icon={<span className="icon-paste" />}
+                    onClick={() => {
+                      sheet._doPaste();
+                    }}
+                  >
+                    Paste
+                  </MenuItem>
+                </>
+              )}
+            </MenuList>
+          </MenuPopover>
+        ): <></>}
+      </Menu>
+    );
   }
 
-  public showContextualMenu(position: Point, spread: GcSpread.Sheets.Spread) {
+  public showContextualMenu(position: { x: number; y: number }, spread: GcSpread.Sheets.Spread) {
     this.setState({
       visible: true,
-      position: position,
-      spread: spread,
+      position,
+      spread,
     });
   }
-
 }
-
