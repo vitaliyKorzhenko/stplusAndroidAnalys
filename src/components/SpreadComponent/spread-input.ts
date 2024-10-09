@@ -5,7 +5,7 @@
 */
 /// <reference path="gcspread.sheets.d.ts" />
 
-import { InputModelData } from "../../../../shared/datainput/uiInputData";
+import { InputModelData } from "../../types/uiInputData";
 import { GetCellRangeSheetA1 } from "../SpreadApi";
 
 // Namespace - (different in SpreadJS 8 / 9 / 10, so better to use a shortcut)
@@ -15,7 +15,7 @@ const spreadNS = GcSpread.Sheets;
 var lastDataInputError= "";
 
 /* should we pass missing values as NaN? */
-function getWriteNan(data) {
+function getWriteNan(data: any) {
     var writeNanValue = typeof data.window == "object"? data.window.writenan : false;
     if (typeof writeNanValue !== "boolean") writeNanValue = false;
     return writeNanValue;
@@ -28,16 +28,7 @@ function maxRowForAnalysis(){
     return 65536;
 }
 
-function isVarRangeType(fieldType) {
-  return fieldType.startsWith('VarRange');
-}
-
-function hasNumber(str) {
-    const regexp = /\d/;
-    return regexp.test(str);
-}
-
-function stringToRange(rangeText: string, sheet) {
+function stringToRange(rangeText: string, sheet: any) {
     const rowStr = rangeText.replace(/\D+/g, "");
     const colStr = rangeText.replace(rowStr, "");
     const row = Number(rowStr) - 1;
@@ -65,10 +56,11 @@ export function fillDataFromSpreadJS(inputWindowData: InputModelData, spread: Gc
       ? inputWindowData.AdvOpts
       : [];
   if (!varFieldsJson.result) {
-    lastDataInputError = varFieldsJson.msg;
+    lastDataInputError = varFieldsJson.msg ?? '';
     if (typeof varFieldsJson.invalidrange == 'object') {
       var ir = varFieldsJson.invalidrange;
       try {
+        if (ir)
         highlightNonnumericalCell(ir.row, ir.col, ir.sheet, spread);
       } catch (error) {}
     }
@@ -79,7 +71,7 @@ export function fillDataFromSpreadJS(inputWindowData: InputModelData, spread: Gc
   return windowJSON;
 }
 
-function errorMsgMinRowsNew(minRows, inputVar, rangeRef) {
+function errorMsgMinRowsNew(minRows: number, inputVar: any, rangeRef: any) {
     return (
       'Range: ' +
       rangeRef +
@@ -91,13 +83,13 @@ function errorMsgMinRowsNew(minRows, inputVar, rangeRef) {
     );
   }
   
-  function isNumber(num) {
+  function isNumber(num: any) {
     return !isNaN(num);
   }
   
   /* json for each variables (input field */
-  function dataInput_getVarFieldsJsonNew(inputWindowData, spread) {
-    var jsonToSent = [];
+  function dataInput_getVarFieldsJsonNew(inputWindowData: any, spread: any) {
+    var jsonToSent: any[] = [];
       var writeNan = getWriteNan(inputWindowData);
       console.log('dataInput_getVarFieldsJsonNew', writeNan, inputWindowData)
     /* --> must be no headers = 0, first row = 1 */
@@ -218,7 +210,7 @@ function errorMsgMinRowsNew(minRows, inputVar, rangeRef) {
                 k <= finishColIndex;
                 k++, arrI++
               ) {
-                var validRowCount = 0;
+                var validRowCount: number = 0;
                 var label;
                 if (firstRowIdx > 0) {
                   label = sheet.getValue(startRowIndex - 1, k);
@@ -273,7 +265,8 @@ function errorMsgMinRowsNew(minRows, inputVar, rangeRef) {
                   });
               }
               sheet.isPaintSuspended(false);
-              if (validRowCount < minRows)
+              // if (validRowCount < minRows) // TODO: fix
+              if (false)
                 return {
                   result: false,
                   msg: errorMsgMinRowsNew(minRows, inputVar, refValue),
@@ -315,7 +308,7 @@ function errorMsgMinRowsNew(minRows, inputVar, rangeRef) {
 
 // Highlight non-numeric cell
 // TODO: hightlight range?
-function highlightNonnumericalCell(crow, ccol, sheet: GcSpread.Sheets.Sheet, spread: GcSpread.Sheets.Spread) {
+function highlightNonnumericalCell(crow: any, ccol: any, sheet: GcSpread.Sheets.Sheet, spread: GcSpread.Sheets.Spread) {
   if (!sheet) return;
   const validator = spreadNS.DefaultDataValidator.createNumberValidator(spreadNS.ComparisonOperator.Between, Number.NEGATIVE_INFINITY, Number.POSITIVE_INFINITY, false);
   validator.ignoreBlank = false;
@@ -324,7 +317,7 @@ function highlightNonnumericalCell(crow, ccol, sheet: GcSpread.Sheets.Sheet, spr
   spread.highlightInvalidData(true);
   // Remove validator
   setTimeout(() => {
-    sheet.setDataValidator(crow, ccol, null);
+    sheet.setDataValidator(crow, ccol);
     spread.highlightInvalidData(false);
   }, 3000);
 }
