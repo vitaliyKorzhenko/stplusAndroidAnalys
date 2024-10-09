@@ -6,13 +6,13 @@ export const spreadDefFontSize = 10; // Use from preferences
 export const spreadDefFont = "Arial";// Use from preferences
 
 // parse float (int font size)
-export function parseFontSize(fontSize) {
+export function parseFontSize(fontSize: string) {
     return parseFloat(fontSize).toFixed(0).toLocaleString().replace(/\.?0+$/, '');
 }
 
 
 // parse CSS font string into object
-export function parseFontString(font) {
+export function parseFontString(font: string) {
     var fontFamily = null,
         fontSize = null,
         fontStyle = "normal",
