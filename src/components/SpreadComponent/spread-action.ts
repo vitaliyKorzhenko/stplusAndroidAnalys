@@ -5,11 +5,11 @@
 /// <reference path="gcspread.sheets.d.ts" />
 
 import { RefObject } from 'react';
-import { translate } from '../../../../shared/localization/localization';
 import { matchFontSizeToPt, parseFontString, spreadDefFont, spreadDefFontSize } from './spread-font';
 
 import { SpreadToolbarFormat } from './toolbar'
 import { ISpreadSelectionFormat } from './types-format';
+import { translate } from '../../localization/localization';
 
 // Namespace - (different in SpreadJS 8 / 9 / 10, so better to use a shortcut)
 const spreadNS = GcSpread.Sheets;
@@ -36,7 +36,7 @@ function xor(a: boolean,b: boolean): boolean { return !a != !b;}
 export class SpreadActions{
 
     // Main spreadsheet
-    public spread: GcSpread.Sheets.Spread;
+    public spread: GcSpread.Sheets.Spread | null = null; 
 
     // Optional, ref to a toolbar. Used to send updates
     private refToolbarFormat?: RefObject<SpreadToolbarFormat>;
@@ -45,11 +45,11 @@ export class SpreadActions{
     private refStyleElem: RefObject<HTMLInputElement>;
 
     // Current selection style
-    private selectionStyle: ISpreadSelectionFormat = null;
+    private selectionStyle: ISpreadSelectionFormat | null = null;
 
     // Props - TODO: use context
     showErrorMessage: (message: string) => any;
-    activeSheetChanged: (oldSheet: GcSpread.Sheets.Sheet, newSheet: GcSpread.Sheets.Sheet) => any;
+    activeSheetChanged: (oldSheet: GcSpread.Sheets.Sheet | null, newSheet: GcSpread.Sheets.Sheet | null) => any;
 
   constructor(refStyleElem: RefObject<HTMLInputElement>,
     refToolbarFormat: RefObject<SpreadToolbarFormat>,
@@ -65,7 +65,7 @@ export class SpreadActions{
     // Selection changed implementation for a format toolbar or panel.
   // * named similar to legacy spread6.js
   // Forward event to a toolbar or panel (if shown)
-  public updateFontStyle = (sheet?: GcSpread.Sheets.Sheet) => {
+  public updateFontStyle = (sheet?: GcSpread.Sheets.Sheet | null) => {
     this.selectionStyle = null;
     if (!sheet)
       sheet = this.spread ? this.spread.getActiveSheet() : null;
@@ -87,8 +87,8 @@ export class SpreadActions{
     }
     const parsedFont = parseFontString(font);
     console.log('parsedFont', font)
-    const isBold = parsedFont.fontWeight && parsedFont.fontWeight !== "normal";
-    const isItalic = parsedFont.fontStyle && parsedFont.fontStyle !== "normal";
+    const isBold: boolean = !!(parsedFont.fontWeight && parsedFont.fontWeight !== "normal");
+    const isItalic: boolean = !!(parsedFont.fontStyle && parsedFont.fontStyle !== "normal");
 
     fontFamily = parsedFont.fontFamily.split(",")[0];
     if (fontFamily.length > 2 && fontFamily.charAt(0) == '"' && fontFamily.charAt(fontFamily.length - 1) == '"')
@@ -127,8 +127,8 @@ export class SpreadActions{
       isBorderLeft: !!selCell.borderLeft(),
       isBorderRight: !!selCell.borderRight(),
 
-      canUndo: this.spread._undoManager._undoStack.length > 0,
-      canRedo: this.spread._undoManager._redoStack.length > 0,
+      canUndo: this.spread && this.spread._undoManager._undoStack.length > 0 ? true : false,
+      canRedo: this.spread && this.spread._undoManager._redoStack.length > 0 ? true: false,
     };
 
     // Send to toolbar
@@ -147,15 +147,19 @@ export class SpreadActions{
   }
 
   private removeSheet = (idx: number) => {
-    this.spread.removeSheet(idx);
+   if (this.spread) this.spread.removeSheet(idx);
     // on remove sheet event - was: tryPanelChartEditDisable();
     this.activeSheetChanged(null, null);
   }
 
   // Get the selection area's type
   getSelectionType = () => {
-    const selections = this.spread.getActiveSheet().getSelections();
     let selectionType;
+    //check spread
+    if (!this.spread)
+    return null;
+
+    const selections = this.spread.getActiveSheet().getSelections();
     for (let i = 0; i < selections.length; i++) {
       var selection = selections[i];
       if (selection.col == -1 && selection.row == -1) {
@@ -201,7 +205,7 @@ export class SpreadActions{
     var result = true;
     for (var i = 0; i < sortedRanges.length; i++) {
       var range = sortedRanges[i];
-      var arrayFormulaRanges = [];
+      var arrayFormulaRanges: any[] = [];
       var row = range.row;
       var col = range.col;
       var endRow = range.row + range.rowCount;
@@ -267,7 +271,7 @@ export class SpreadActions{
     let result = true;
     for (let i = 0; i < sortedRanges.length; i++) {
       const range = sortedRanges[i];
-      const arrayFormulaRanges = [];
+      const arrayFormulaRanges: any [] = [];
       const row = range.row;
       const col = range.col;
       const endRow = range.row + range.rowCount;
@@ -316,7 +320,9 @@ export class SpreadActions{
   }  
 
   public spreadAction: SpreadActionFunc = (id: string, value: any) => {
-    if (id === "focus") {
+    if (!this.spread)
+      return;
+    if (id === "focus" && this.spread) {
       this.spread.focus();
       return;
     }
@@ -329,7 +335,7 @@ export class SpreadActions{
       const styleElem = this.refStyleElem.current;
 
       //TODO: remove
-      console.log('spreadAction', id, styleElem.style.font)
+      console.log('spreadAction', id, styleElem ? styleElem.style.font: 'FONT UNDEFINED!');
 
       // Current selection (or multiple when non-adjacent ranges are selected)
       const sels = sheet.getSelections();
@@ -363,7 +369,7 @@ export class SpreadActions{
         case "fontSize":
         case "bold":
         case "italic":
-          const fontStr = styleElem.style.font;
+          const fontStr = styleElem ? styleElem.style.font : '';
           const fontSize = id == "fontSize" ? value : this.selectionStyle.fontSize;
           const fontName = id == "fontStyle" ? value : this.selectionStyle.fontName;
           let resultFont = "";
@@ -471,7 +477,7 @@ export class SpreadActions{
             for (let i = sel.row; i < sel.row + sel.rowCount; i++) {
               for (let k = sel.col; k < sel.col + sel.colCount; k++) {
                 if (i == sel.row + sel.rowCount - 1)
-                  sheet.getCell(i, k).borderBottom(value ? defaultBorderStyle : null);
+                  sheet.getCell(i, k).borderBottom(value ? defaultBorderStyle : undefined);
               }
             }
           });
@@ -481,7 +487,7 @@ export class SpreadActions{
             for (let i = sel.row; i < sel.row + sel.rowCount; i++) {
               for (let k = sel.col; k < sel.col + sel.colCount; k++) {
                 if (i == sel.row)
-                  sheet.getCell(i, k).borderTop(value ? defaultBorderStyle : null);
+                  sheet.getCell(i, k).borderTop(value ? defaultBorderStyle : undefined);
               }
               break;
             }
@@ -492,7 +498,7 @@ export class SpreadActions{
             for (let i = sel.col; i < sel.col + sel.colCount; i++) {
               for (let k = sel.row; k < sel.row + sel.rowCount; k++) {
                 if (i == sel.col)
-                  sheet.getCell(k, i).borderLeft(value ? defaultBorderStyle : null);
+                  sheet.getCell(k, i).borderLeft(value ? defaultBorderStyle : undefined);
               }
               break;
             }
@@ -503,17 +509,17 @@ export class SpreadActions{
             for (let i = sel.col; i < sel.col + sel.colCount; i++) {
               for (let k = sel.row; k < sel.row + sel.rowCount; k++) {
                 if (i == sel.col + sel.colCount - 1)
-                  sheet.getCell(k, i).borderRight(value ? defaultBorderStyle : null);
+                  sheet.getCell(k, i).borderRight(value ? defaultBorderStyle : undefined);
               }
             }
           });
           break;
         case "noBorders":
           applyFunction(cells => {
-            cells.borderRight(null);
-            cells.borderLeft(null);
-            cells.borderBottom(null);
-            cells.borderTop(null);
+            cells.borderRight(undefined);
+            cells.borderLeft(undefined);
+            cells.borderBottom();
+            cells.borderTop(undefined);
           });
           break;
         case "outsideBorders":
@@ -793,7 +799,7 @@ export class SpreadActions{
               const start = new spreadNS.Range(selection.row, i + selection.col, 1, 1);
               const r = new spreadNS.Range(selection.row, i + selection.col, selection.rowCount, 1);
               // TODO: ! calculate step              
-              sheet.fillGrowth(start, r, spreadNS.FillSeries.Column, 1, null);
+              sheet.fillGrowth(start, r, spreadNS.FillSeries.Column, 1, 0);
             }
           });
           break;
@@ -809,7 +815,7 @@ export class SpreadActions{
             for (let i = 0; i < selection.rowCount; i++) {
               const start = new spreadNS.Range(i + selection.row, selection.col, 1, 1);
               const r = new spreadNS.Range(i + selection.row, selection.col, 1, selection.colCount);
-              sheet.fillGrowth(start, r, spreadNS.FillSeries.Row, 1, null);
+              sheet.fillGrowth(start, r, spreadNS.FillSeries.Row, 1, 0);
             }
           });
           break;
@@ -856,7 +862,7 @@ export class SpreadActions{
           }
           break;
         case "clearFilter":
-          sheet.rowFilter(null);
+          sheet.rowFilter(undefined);
           break;            
       }
     }
