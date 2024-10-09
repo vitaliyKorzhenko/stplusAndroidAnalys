@@ -1,9 +1,7 @@
 import { createContext, useContext } from 'react'
-import { IUITheme } from '../../../types/IUITheme'
 
 //TODO:2 темы?
 export type SpreadContextType = {
-    uitheme: IUITheme,
     language: string
     startProgress:(message: string, short: boolean, level?: number) => any
     stopProgress: (level?: number) => any,
@@ -11,7 +9,6 @@ export type SpreadContextType = {
 }
 
 export const SpreadAppContext = createContext<SpreadContextType>({
-    uitheme: null,
     language: 'en',
     startProgress: () => {},
     stopProgress: () => {},
