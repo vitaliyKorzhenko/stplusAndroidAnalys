@@ -8576,7 +8576,7 @@ declare module GcSpread.Sheets{
         _doCopy(arg0: boolean): string;
         _getFontHeight(font, ignoreCache?): number;
         // _zoomFactor: number;
-        getSpan(row: number, col: number, viewport: SheetArea);
+        getSpan(row: number, col: number, viewport?: SheetArea);
         
         _name: any;
         /**
@@ -9837,7 +9837,7 @@ declare module GcSpread.Sheets{
          * @param {GcSpread.Sheets.DefaultDataValidator} value The data validator.
          * @param {GcSpread.Sheets.SheetArea} sheetArea The sheet area. If this parameter is not provided, it defaults to <b>viewport</b>.
          */
-        setDataValidator(row: number, col: number, value: DefaultDataValidator, sheetArea?: SheetArea): void;
+        setDataValidator(row: number, col: number, value?: DefaultDataValidator, sheetArea?: SheetArea): void;
         /**
          * Sets the default style information for the sheet.
          * @param {GcSpread.Sheets.Style} style The style to set.

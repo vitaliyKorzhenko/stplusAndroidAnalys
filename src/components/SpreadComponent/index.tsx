@@ -555,10 +555,10 @@ export class SpreadComponent extends React.Component<ISpreadComponentProps, ISpr
   }
 
   repaintFloatingCharts(oldZoom: number, zoom: number) {
-    this.repaintFloatingChartsSheet(oldZoom, zoom, null);
+    this.repaintFloatingChartsSheet(oldZoom, zoom, undefined);
   }
 
-  private fc = null;
+  private fc: any;
 
   repaintFloatingChartsSheet(oldZoom: number, zoom: number, sheet?: GcSpread.Sheets.Sheet) {
     if (!sheet)
@@ -570,7 +570,7 @@ export class SpreadComponent extends React.Component<ISpreadComponentProps, ISpr
       try {
         const floatChart = charts[i];
         if (i == 0)
-          this.fc = floatChart;
+        if (this.fc) this.fc = floatChart;
         floatChart["options"].width *= k;
         floatChart["options"].height *= k;
         floatChart.repaint(floatChart["options"], zoom / 100);
@@ -624,7 +624,7 @@ export class SpreadComponent extends React.Component<ISpreadComponentProps, ISpr
   };
 
   // Host wants to set zoom = value for an active sheet
-  eventSetZoom = (value) => {
+  eventSetZoom = (value: number) => {
     this.setZoom(value);
   }
 
@@ -671,7 +671,7 @@ export class SpreadComponent extends React.Component<ISpreadComponentProps, ISpr
   }
 
   // Event triggered by SpreadJS or spread-actions
-  private activeSheetChanged = (sender, args) => {
+  private activeSheetChanged = (sender: any, args: any) => {
     this.activeSheetChangedProcess(args.oldSheet, args.newSheet);
   } 
 
@@ -690,7 +690,7 @@ export class SpreadComponent extends React.Component<ISpreadComponentProps, ISpr
     this.panelChartEditDisable();
   } 
 
-  private selectionMode: ISpreadSelectionMode = null;
+  private selectionMode: ISpreadSelectionMode | undefined = undefined;
 
   setSelectionMode(mode?: ISpreadSelectionMode) {
     this.selectionMode = mode;
@@ -708,9 +708,10 @@ export class SpreadComponent extends React.Component<ISpreadComponentProps, ISpr
     this.setVisibleDialogFind(false);
   }
 
-  private selectionChanged = (sender?, args?) => {
+  private selectionChanged = (sender?: any, args?: any) => {
     const selectionAddress = this.getSelectionAddress();
     if (typeof selectionAddress !== 'undefined' && selectionAddress) {
+      if (this.refPositionBox && this.refPositionBox.current)
       this.refPositionBox.current.value = selectionAddress.range;
       const sheet = this.spread.getActiveSheet();
       this.spreadActions.updateFontStyle(sheet);
@@ -725,7 +726,7 @@ export class SpreadComponent extends React.Component<ISpreadComponentProps, ISpr
         sheet.clearPendingChanges();
       this.platformSelectionChanged();
     } else {
-      this.refPositionBox.current.value = '';
+      if (this.refPositionBox && this.refPositionBox.current)  this.refPositionBox.current.value = '';
     }
     this.panelChartEditDisable();
   }
@@ -867,6 +868,7 @@ export class SpreadComponent extends React.Component<ISpreadComponentProps, ISpr
               case 3:
                 {
                   const styleElem = this.refStyleElem.current;//document.getElementById("styleElem");
+                  if (!styleElem) break;
                   let cellFs = defFontSize;
                   if (cell.FontSizeInc != 0) cellFs += cell.FontSizeInc;
                   styleElem.style.font = sheetCell.font();
@@ -893,7 +895,7 @@ export class SpreadComponent extends React.Component<ISpreadComponentProps, ISpr
             cell.RowMerge = (cell.RowMerge !== null) && (cell.RowMerge > 1) ? cell.RowMerge : 1;
             try {
               // TODO: span = null?
-              const cellSpan = sheet.getSpan(k, i, null);
+              const cellSpan = sheet.getSpan(k, i, undefined);
               let canSpan = true;
               if (cellSpan) {
                 canSpan = (cellSpan.col == i) && (cellSpan.row == k);
@@ -1084,7 +1086,7 @@ export class SpreadComponent extends React.Component<ISpreadComponentProps, ISpr
       return row != -1 && col != -1;
     }
 
-    const checkIfWorksheetContains = (searchInformation, sheet) => {
+    const checkIfWorksheetContains = (searchInformation: any, sheet: any) => {
       // TODO: ?
       const searchCondition = new GcSpread.Sheets.SearchCondition();
       searchCondition.searchString = searchInformation.SearchString;
@@ -1115,7 +1117,7 @@ export class SpreadComponent extends React.Component<ISpreadComponentProps, ISpr
       }
     }    
 
-    const findNextWithinWorksheet = (searchInformation, sheet) => {
+    const findNextWithinWorksheet = (searchInformation: any, sheet: any) => {
       this.findCache.findRowIndex = -1;
       this.findCache.findColumnIndex = -1;
       const found = findWithinWorksheet(searchInformation, sheet);
@@ -1144,7 +1146,7 @@ export class SpreadComponent extends React.Component<ISpreadComponentProps, ISpr
       return worksheetList;
     }
 
-    const findNextWithinWorkbook = (sheet) => {
+    const findNextWithinWorkbook = (sheet: any) => {
       const worksheetList = getFindWorksheetList();
       this.findCache.findRowIndex = -1;
       this.findCache.findColumnIndex = -1;
