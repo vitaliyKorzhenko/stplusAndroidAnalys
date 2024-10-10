@@ -11,17 +11,15 @@
 */
 /// <reference path="gcspread.sheets.d.ts" />
 
-import React, { CSSProperties } from 'react';
+import React, { CSSProperties, useId } from 'react';
 
 import { Text, Callout, ColorPicker, CommandBar, CommandButton, ContextualMenuItemType, DirectionalHint, Dropdown, FocusZoneDirection, getColorFromString, IButtonProps, IButtonStyles, IColor, ICommandBarItemProps, Icon, IconButton, IContextualMenuItem, IIconStyles, IImageProps, ImageFit, IStyle, mergeStyleSets, ResponsiveMode, VerticalDivider, Dialog, DialogType, TextField, SpinButton, Position, Toggle } from 'office-ui-fabric-react';
-import { useBoolean, useId } from '@uifabric/react-hooks';
 
-import { commandBarTheme } from '../../themes/brandtheme';
-import { IUITheme } from 'src/types';
+
 import { spreadDefFont, spreadDefFontSize } from './spread-font';
-import { translate } from '../../../../shared/localization/localization';
 import { IChartSpreadOptionAxis, IChartSpreadOptions, ISpreadSelectionFormat } from './types-format'
 import { SpreadActionFunc } from './spread-action';
+import { translate } from '../../localization/localization';
 
 const classNames = mergeStyleSets({
   menu: {
@@ -76,7 +74,7 @@ export interface ISpreadToolbarFormatState extends ISpreadSelectionFormat{
 
 export class SpreadToolbarFormat extends React.Component<ISpreadToolbarFormatProps, ISpreadToolbarFormatState>{
   
-  constructor(props) {
+  constructor(props: ISpreadToolbarFormatProps) {
     super(props);
     this.state = {
       visible: false,  
@@ -225,7 +223,7 @@ export class SpreadToolbarFormat extends React.Component<ISpreadToolbarFormatPro
                 onChange={(ev: React.SyntheticEvent<HTMLElement>, color: IColor)=> {
                   const hex = `#${color.hex}`;
                   const hexColor = defaultColor && (hex.toLowerCase() == defaultColor.toLowerCase()) ? null : hex;
-                  action(hexColor)
+                  action(hexColor ?? '')
                   setColor(color);
                 }}
               />
