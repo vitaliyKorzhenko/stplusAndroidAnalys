@@ -1,6 +1,6 @@
 import React from "react";
 import { MainTopPanelSpread } from "../topPanelSpread";
-import { SpreadsheetComponent } from "../speadsheet";
+import SpreadComponent from "../spreadNewComponent";
 import { ApiUserFilesNode } from "../../api/ApiUserFiles/userFiles";
 import { Command } from "../../types/commands";
 
@@ -99,7 +99,7 @@ class MainSpread extends React.Component<SpreadProps, SpreadState> {
           updateLanguage={this.props.updateLanguage}
 
         />
-        <SpreadsheetComponent
+        <SpreadComponent
         />
       
       </div>

@@ -1,3 +1,4 @@
+
 declare module GcSpread.Sheets{
     export class StyleHelper {
         constructor();

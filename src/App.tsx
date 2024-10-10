@@ -13,6 +13,7 @@ import { MainSpread } from './components/spread/index'
 import { activateLanguage } from './localization/localization'
 import { getRedirectResult } from 'firebase/auth'
 import LocalFileHelper from './helpers/localFileHelper'
+
 function App() {
 
 
