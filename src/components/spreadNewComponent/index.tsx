@@ -1,6 +1,7 @@
 import * as GC from '@mescius/spread-sheets';
 import { SpreadSheets, Worksheet } from '@mescius/spread-sheets-react';
 import '@mescius/spread-sheets/styles/gc.spread.sheets.excel2013white.css';
+import SheetTable from '../newSpreadSheet';
 
 const hostStyle: React.CSSProperties = {
   width: '100%',
@@ -23,4 +24,11 @@ const SpreadComponent: React.FC = () => {
   );
 };
 
-export default SpreadComponent;
+const NewSpreadComponent: React.FC = () => {
+  return (
+    <SheetTable/>
+  )
+
+}
+
+export default NewSpreadComponent;
