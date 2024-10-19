@@ -28,6 +28,7 @@ import { AppNavigate } from "../../helpers/navigateHelper";
 import { IPreferencesOptions, IPreferencesSections } from "../preferences/types";
 import preferences from '../../helpers/preferences.json';
 import { PreferencesHelper } from "./preferencesHelper";
+import { ApiAnalys } from "../../api/ApiAnalys";
 
 export interface InputPanelProps {
   isOpen: boolean;
@@ -382,6 +383,21 @@ export const InputPanel = (props: InputPanelProps) => {
               style={{
                 backgroundColor: "#1E90FF",
                 color: "white",
+              }}
+              onClick={async () => {
+                try {
+                  console.log('RUN  TEST ANALYSIS');
+                  let res = await ApiAnalys.testAnalysis();
+                  console.log('RES TEST ANALYSIS', res);
+                  alert(res.Response);
+                  // if (res && res.data && res.data.Response)
+                  // alert(res.data.Response);
+                  
+                } catch (error) {
+                  console.log('ERROR RUN ANALYSIS', error);
+                }
+               
+
               }}
             >
               {translate('ui.label.run', 'Run')}

@@ -12,11 +12,13 @@ export class AppConfiguration {
     private static nodeRemoteApiUrl: string = "https://sp-server-test.vercel.app";
 
 
-    private static apiUrl : string = '';
+    private static apiUrl : string = 'http://5.9.99.212:4030';
+
+    private static newServerUrl: string = ''
 
     public static getApiUrlNode(): string {
         this.apiUrl = this.isDebug ? this.nodeLocalApiUrl : this.nodeRemoteApiUrl;
-        return this.apiUrl;
+        return this.newServerUrl;
     }
 
     /**

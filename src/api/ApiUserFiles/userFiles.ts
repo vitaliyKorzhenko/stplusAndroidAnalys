@@ -41,13 +41,13 @@ export class ApiUserFilesNode {
     public static async getExamplesFilesNode(): Promise<IExampleFileNodeModel[]> {
         const tokenData = new FormData();
         const res = await ApiBase.runBaseRequest(tokenData, MethodsHelper.getExampleFilesNode);
-        if (res.status != ServiceResponseErrorCodes.NoError) return Promise.reject(res.message);
+        if (res.status !== ServiceResponseErrorCodes.NoError) return Promise.reject(res.message);
         return Promise.resolve<IExampleFileNodeModel[]>(res.data)
     }
    
     public static async getUserFilesNode(userId: number): Promise<IUserFileNodeModel[]> {
         const res = await ApiBase.runBaseRequest({ userId: userId }, MethodsHelper.findUserFilesNode);
-        if (res.status != ServiceResponseErrorCodes.NoError) return Promise.reject(res.message);
+        if (res.status !== ServiceResponseErrorCodes.NoError) return Promise.reject(res.message);
         return Promise.resolve<IUserFileNodeModel[]>(res.data)
     }
 
@@ -57,7 +57,7 @@ export class ApiUserFilesNode {
 
     public static async renameFileNode(fileId: number, fileName: string): Promise<IUserFileNodeModel> {
         const res = await ApiBase.runBaseRequest({ file_id: fileId, file_name: fileName }, MethodsHelper.renameFileNode);
-        if (res.status != ServiceResponseErrorCodes.NoError) return Promise.reject(res.message);
+        if (res.status !== ServiceResponseErrorCodes.NoError) return Promise.reject(res.message);
         return Promise.resolve<IUserFileNodeModel>(res.data)
     }
 
@@ -77,7 +77,7 @@ export class ApiUserFilesNode {
 
     public static async deleteFileNode(fileId: number): Promise<IUserFileNodeModel> {
         const res = await ApiBase.runBaseRequest({ file_id: fileId }, MethodsHelper.deleteFileNode);
-        if (res.status != ServiceResponseErrorCodes.NoError) return Promise.reject(res.message);
+        if (res.status !== ServiceResponseErrorCodes.NoError) return Promise.reject(res.message);
         return Promise.resolve<IUserFileNodeModel>(res.data)
     }
 
@@ -87,7 +87,7 @@ export class ApiUserFilesNode {
     
     public static async restoreFileNode(fileId: number): Promise<IUserFileNodeModel> {
         const res = await ApiBase.runBaseRequest({ file_ids: fileId.toString() }, MethodsHelper.restoreTrashFilesNode);
-        if (res.status != ServiceResponseErrorCodes.NoError) return Promise.reject(res.message);
+        if (res.status !== ServiceResponseErrorCodes.NoError) return Promise.reject(res.message);
         return Promise.resolve<IUserFileNodeModel>(res.data)
     }
 
@@ -97,7 +97,7 @@ export class ApiUserFilesNode {
 
     public static async openFileNode(fileId: number): Promise<IUserFileNodeModel> {
         const res = await ApiBase.runBaseRequest({ file_id: fileId }, MethodsHelper.openFileNode);
-        if (res.status != ServiceResponseErrorCodes.NoError) return Promise.reject(res.message);
+        if (res.status !== ServiceResponseErrorCodes.NoError) return Promise.reject(res.message);
         return Promise.resolve<IUserFileNodeModel>(res.data)
     }
 
@@ -107,7 +107,7 @@ export class ApiUserFilesNode {
     public static async deleteTrashFilesNode (file_ids: string): Promise<any> {
         const res = await ApiBase.runBaseRequest({ file_ids: file_ids }, MethodsHelper.deleteTrashFilesNode);
         console.log('deleteTrashFilesNode', res);
-        if (res.status != ServiceResponseErrorCodes.NoError) return Promise.reject(res.message);
+        if (res.status !== ServiceResponseErrorCodes.NoError) return Promise.reject(res.message);
         return Promise.resolve(res.data);
     }
 
@@ -118,7 +118,7 @@ export class ApiUserFilesNode {
     public static async emptyTrashNode(userId: number): Promise<any> {
         const res = await ApiBase.runBaseRequest({ userId: userId }, MethodsHelper.emptyTrashNode);
         console.log('emptyTrashNode', res);
-        if (res.status != ServiceResponseErrorCodes.NoError) return Promise.reject(res.message);
+        if (res.status !== ServiceResponseErrorCodes.NoError) return Promise.reject(res.message);
         return Promise.resolve(res.data);
     }
 }

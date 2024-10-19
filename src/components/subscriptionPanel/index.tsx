@@ -8,9 +8,10 @@ import {
   makeStyles,
   shorthands,
   ToolbarButton,
-  Text
+  Text,
+  Button
 } from "@fluentui/react-components";
-import { TextSubscript24Filled} from "@fluentui/react-icons";
+import { Dismiss24Regular, TextSubscript24Filled} from "@fluentui/react-icons";
 import { ActiveDiscountIntent } from "../activeDiscountMessage";
 import { BillingHistoryIntent } from "../billingHistoryMessage";
 import { PricesButton } from "../showPricesButton";
@@ -71,6 +72,17 @@ export const SubscriptionPanel = () => {
           >
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
          <SubscriptionLabel/>
+         <DrawerHeaderTitle
+            action={
+              <Button
+                appearance="subtle"
+                aria-label="Close"
+                icon={<Dismiss24Regular />}
+                onClick={() => setOpen(false)}
+                
+              />
+            }
+          ></DrawerHeaderTitle>
           </div>  
           </DrawerHeaderTitle>
         </DrawerHeader>

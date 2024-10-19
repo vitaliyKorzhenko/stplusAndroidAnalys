@@ -74,6 +74,12 @@ export class MethodsHelper {
 
     public static createAnalysNode : IMethod = { name: 'analyses', type: MethodType.POST, parameters: ['userId', 'cmIdd', 'status', 'prefsCorePascal', 'windowJSON', 'result'] };
 
+
+    //run analysis
+    public static runAnalysisNode : IMethod = { name: 'analyses/runAnalysis', type: MethodType.POST, parameters: ['id', 'prefs', 'data'] };
+
+    
+
     public static getMethod(method: IMethod): MethodType {
         return method.type;
     }

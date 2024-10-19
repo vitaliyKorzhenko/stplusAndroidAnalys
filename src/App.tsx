@@ -1,6 +1,6 @@
 import './App.css'
 import { useEffect, useState } from 'react'
-import { FluentProvider, webLightTheme, webDarkTheme, teamsDarkTheme, teamsLightTheme } from '@fluentui/react-components'
+import { FluentProvider, webLightTheme, webDarkTheme} from '@fluentui/react-components'
 import Login from './components/loginPage/index'
 import { Drive } from './components/drive/index'
 import { auth } from './firebase/index'
@@ -55,15 +55,8 @@ function App() {
     // Переключайте между темами при каждом вызове
     //randomTheme();
     //setTheme((prevTheme) => (prevTheme === teamsDarkTheme ? teamsLightTheme : teamsDarkTheme));
-    let randomTheme = Math.floor(Math.random() * 2);
-    switch (randomTheme) {
-      case 0:
-        setTheme((prevTheme) => (prevTheme === webDarkTheme ? webLightTheme : webDarkTheme));
-        break;
-      case 1:
-        setTheme((prevTheme) => (prevTheme === teamsDarkTheme ? teamsLightTheme : teamsDarkTheme));
-        break;
-    }
+    setTheme(theme === webDarkTheme ? webLightTheme : webDarkTheme);
+
   };
 
   useEffect(() => {
