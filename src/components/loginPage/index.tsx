@@ -102,14 +102,17 @@ export const Login = (props: LoginProps) => {
             console.error('Error during sign-in:', error.message || error);
     
             // Если ошибка "email-already-in-use", создаем нового пользователя
-            if (error.code === 'auth/user-not-found') {
+            if (error.code === 'auth/user-not-found' || true) {
+                console.log('go create user');
                 try {
                     // Регистрируем нового пользователя
                     await createUserWithEmailAndPassword(auth, email, password);
+                    console.log('create success');
                     // Сразу же выполняем вход
                     await signInWithEmailAndPassword(auth, email, password);
                     props.changeAuth();
                 } catch (registerError: any) {
+                    console.log('ERROR USER REGISTER', registerError);
                     console.error('Error during registration:', registerError.message || registerError);
                 }
             }
